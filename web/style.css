@@ -765,6 +765,124 @@
         padding: 30px 20px;
     }
 }
+
+/* LOGIN PAGE */
+.login-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+}
+
+/* CARD */
+.login-card {
+    width: 380px;
+    padding: 40px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    color: #fff;
+}
+
+/* TITLE */
+.login-title {
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.login-subtitle {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 0.9rem;
+    color: #cbd5f5;
+}
+
+/* INPUT GROUP */
+.input-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+}
+
+/* FLOAT LABEL */
+.input-group label {
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    font-size: 0.85rem;
+    color: #aaa;
+    transition: 0.3s;
+}
+
+.input-group input:focus + label,
+.input-group input:valid + label {
+    top: -8px;
+    font-size: 0.7rem;
+    color: #38bdf8;
+}
+
+/* ERROR */
+.error {
+    color: #f87171;
+    font-size: 0.75rem;
+}
+
+/* PASSWORD TOGGLE */
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 12px;
+    cursor: pointer;
+}
+
+/* EXTRA OPTIONS */
+.extra-options {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    margin-bottom: 20px;
+}
+
+.forgot {
+    color: #38bdf8;
+    text-decoration: none;
+}
+
+/* BUTTON */
+.btn-login {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #38bdf8, #6366f1);
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-login:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px #38bdf8;
+}
+
+/* SIGNUP */
+.signup-text {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.85rem;
+}
 /*for search */
 /* Header layout */
 .site-header {
@@ -982,3 +1100,5 @@ button:hover {
         transform: translateY(0);
     }
 }
+
+

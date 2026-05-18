@@ -52,7 +52,7 @@ while(rs.next()){
 
 <div class="d-flex justify-content-between">
     <span><%= name %> (x<%= qty %>)</span>
-    <span>$<%= sub %></span>
+    <span><%= sub %>Birr</span>
 </div>
 
 <%
@@ -60,7 +60,7 @@ while(rs.next()){
 %>
 
 <hr>
-<h5>Total: $<%= total %></h5>
+<h5>Total: <%= total %>Birr</h5>
 
     </div>
 </div>

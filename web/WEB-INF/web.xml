@@ -48,6 +48,10 @@
         <servlet-name>PaymentServlet</servlet-name>
         <servlet-class>SmartElectronics.PaymentServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UpdateProductServlet</servlet-name>
+        <servlet-class>SmartElectronics.UpdateProductServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Register</servlet-name>
         <url-pattern>/Register</url-pattern>
@@ -96,9 +100,22 @@
         <servlet-name>PaymentServlet</servlet-name>
         <url-pattern>/PaymentServlet</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateProductServlet</servlet-name>
+        <url-pattern>/UpdateProductServlet</url-pattern>
+    </servlet-mapping>
+   
+   
     <session-config>
         <session-timeout>
             30
         </session-timeout>
     </session-config>
+     
+    <multipart-config>
+        <max-file-size>10485760</max-file-size>
+        <max-request-size>20971520</max-request-size>
+        <file-size-threshold>0</file-size-threshold>
+        
+    </multipart-config>
 </web-app>

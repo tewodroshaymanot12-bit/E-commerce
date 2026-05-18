@@ -57,6 +57,7 @@ public class OrderServlet extends HttpServlet {
                 insert.setInt(2, product_id);
                 insert.setInt(3, qty);
                 insert.setDouble(4, total_price);
+               
 
                 insert.executeUpdate();
             }

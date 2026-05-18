@@ -1,8 +1,6 @@
-
 package SmartElectronics;
 
 import java.io.IOException;
-//import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -10,75 +8,102 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.sql.*;
 
-
 public class AddToCartServlet extends HttpServlet {
 
-
-    protected void processRequest(HttpServletRequest rq, HttpServletResponse rp)
-            throws ServletException, IOException {
-  
-    }
-
- 
-
     @Override
-protected void doPost(HttpServletRequest rq, HttpServletResponse rp)
-        throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-    HttpSession session = rq.getSession();
+        HttpSession session = request.getSession();
 
-    // Check login
-    if(session == null || session.getAttribute("user_id") == null){
-        rp.sendRedirect("login.html");
-        return;
+        // Check login
+        if (session == null || session.getAttribute("user_id") == null) {
+            response.sendRedirect("login.html");
+            return;
+        }
+
+        int userId = (int) session.getAttribute("user_id");
+        
+        // Get product data
+        String productIdStr = request.getParameter("product_id");
+        String quantityStr = request.getParameter("quantity");
+        
+        if (productIdStr == null || productIdStr.trim().isEmpty()) {
+            response.sendRedirect("products.jsp?error=invalid_product");
+            return;
+        }
+        
+        int productId = Integer.parseInt(productIdStr);
+        int quantity = 1;
+        
+        if (quantityStr != null && !quantityStr.trim().isEmpty()) {
+            try {
+                quantity = Integer.parseInt(quantityStr);
+                if (quantity < 1) quantity = 1;
+            } catch (NumberFormatException e) {
+                quantity = 1;
+            }
+        }
+
+        Connection con = null;
+        PreparedStatement checkStmt = null;
+        PreparedStatement updateStmt = null;
+        PreparedStatement insertStmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = DBConnection.getConnection();
+            
+            System.out.println("=== AddToCart Debug ===");
+            System.out.println("User ID: " + userId);
+            System.out.println("Product ID: " + productId);
+            System.out.println("Quantity: " + quantity);
+
+            // Check if product exists in cart
+            String checkSql = "SELECT quantity FROM cart WHERE user_id = ? AND product_id = ?";
+            checkStmt = con.prepareStatement(checkSql);
+            checkStmt.setInt(1, userId);
+            checkStmt.setInt(2, productId);
+            rs = checkStmt.executeQuery();
+
+            if (rs.next()) {
+                // Update existing
+                int existingQty = rs.getInt("quantity");
+                int newQty = existingQty + quantity;
+                String updateSql = "UPDATE cart SET quantity = ? WHERE user_id = ? AND product_id = ?";
+                updateStmt = con.prepareStatement(updateSql);
+                updateStmt.setInt(1, newQty);
+                updateStmt.setInt(2, userId);
+                updateStmt.setInt(3, productId);
+                updateStmt.executeUpdate();
+                System.out.println("Updated - New quantity: " + newQty);
+            } else {
+                // Insert new (id will auto-increment)
+                String insertSql = "INSERT INTO cart (user_id, product_id, quantity) VALUES (?, ?, ?)";
+                insertStmt = con.prepareStatement(insertSql);
+                insertStmt.setInt(1, userId);
+                insertStmt.setInt(2, productId);
+                insertStmt.setInt(3, quantity);
+                insertStmt.executeUpdate();
+                System.out.println("Inserted new item");
+            }
+
+            response.sendRedirect("cart.jsp?status=added");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("SQL Error: " + e.getMessage());
+            response.sendRedirect("products.jsp?error=db_error");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error: " + e.getMessage());
+            response.sendRedirect("products.jsp?error=unknown");
+        } finally {
+            try { if (rs != null) rs.close(); } catch (SQLException e) {}
+            try { if (checkStmt != null) checkStmt.close(); } catch (SQLException e) {}
+            try { if (updateStmt != null) updateStmt.close(); } catch (SQLException e) {}
+            try { if (insertStmt != null) insertStmt.close(); } catch (SQLException e) {}
+            try { if (con != null) con.close(); } catch (SQLException e) {}
+        }
     }
-
-    // ✅ Get correct user_id from session
-    int user_id = (int) session.getAttribute("user_id");
-
-    // ✅ Get product data
-    int product_id = Integer.parseInt(rq.getParameter("product_id"));
-    int quantity = 1; // always 1 for now
-
-    try {
-        Connection con = DBConnection.getConnection();
-
-        // DEBUG (VERY IMPORTANT)
-        System.out.println("USER_ID: " + user_id);
-        System.out.println("PRODUCT_ID: " + product_id);
-
-        // Insert into cart
-       // Check if product already exists in cart
-PreparedStatement check = con.prepareStatement(
-    "SELECT * FROM cart WHERE user_id=? AND product_id=?"
-);
-check.setInt(1, user_id);
-check.setInt(2, product_id);
-
-ResultSet rs = check.executeQuery();
-
-if(rs.next()){
-    // Product already exists → increase quantity
-    PreparedStatement update = con.prepareStatement(
-        "UPDATE cart SET quantity = quantity + 1 WHERE user_id=? AND product_id=?"
-    );
-    update.setInt(1, user_id);
-    update.setInt(2, product_id);
-    update.executeUpdate();
-} else {
-    // Product not exists → insert new
-    PreparedStatement insert = con.prepareStatement(
-        "INSERT INTO cart(user_id, product_id, quantity) VALUES(?,?,?)"
-    );
-    insert.setInt(1, user_id);
-    insert.setInt(2, product_id);
-    insert.setInt(3, 1);
-    insert.executeUpdate();
-}
-        rp.sendRedirect("cart.jsp");
-
-    } catch(Exception e){
-        e.printStackTrace();
-    }
-}
 }
