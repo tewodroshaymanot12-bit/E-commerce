@@ -7,7 +7,7 @@ public class DBConnection {
     public static Connection getConnection(){
         try{
        Class.forName("com.mysql.jdbc.Driver");
-       con = DriverManager.getConnection("jdbc:mysql://localhost:3306/ecommerce", "root", "");
+       con = DriverManager.getConnection("jdbc:mysql://hopper.proxy.rlwy.net:24438/railway", "root", "DbspbthOHpLgdYelaylTeUELqOLDNhNj");
        
     
 
